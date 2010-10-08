@@ -85,6 +85,21 @@ module DataMapper
         collection
       end
     end
+    
+    def as_json(*args)
+      options = args.first
+      options = {} unless options.kind_of?(Hash)
+
+      resource_options = options.merge(:to_json => false)
+      collection = map { |resource| resource.as_json(resource_options) }
+
+      # default to making JSON
+      if options.fetch(:to_json, true)
+        collection.as_json
+      else
+        collection
+      end
+    end
   end
 
   if Serialize.dm_validations_loaded?
